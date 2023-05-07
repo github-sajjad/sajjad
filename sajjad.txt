@@ -1,0 +1,283 @@
+Expansion Table
+s = "11110000101010101111000010101010"
+print("Input: "+s)
+sbox = [32, 1, 2, 3, 4, 5,
+        4, 5, 6, 7, 8, 9,
+        12, 13, 14, 15, 16, 17,
+        16, 17, 18, 19, 20, 21,
+        20, 21, 22, 23, 24, 25,
+        24, 25, 26, 27, 28, 29,
+        28, 29, 30, 31, 32, 1
+        ]
+out = ""
+for i in sbox:
+        out += str(s[i-1])
+print()
+print("Output: ")
+print(out)
+
+s_box
+
+s_box = [
+    [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7],
+    [0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8],
+    [4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0],
+    [15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13]
+]
+
+def substitute(binary_input):
+    """Substitute input bits using the S-box"""
+    decimal_input = int(binary_input, 2)  
+    input_bits = format(decimal_input, '06b')  
+    row = int(input_bits[0] + input_bits[5], 2) 
+    col = int(input_bits[1:5], 2)
+    output_decimal = s_box[row][col]
+    return output_decimal  
+
+binary_input = input("Enter your digit in binary form: ")
+output_decimal = substitute(binary_input)
+print(output_decimal)
+
+Shift Cipher
+plain_text = input("What is your plaintext: ")
+ key = int(input("What is your shift: "))
+
+ def caesar(plain_text, key):
+     cipher_text = ""
+     for ch in plain_text:
+         if ch.isalpha():
+             stay_in_alphabet = ord(ch) +key
+             if stay_in_alphabet > ord('z'):
+                 stay_in_alphabet -= 26
+             final_letter = chr(stay_in_alphabet)
+             cipher_text += final_letter
+    print("Your ciphertext is: ", cipher_text)
+    return cipher_text
+
+caesar(plain_text, key)
+
+RSA
+
+import random
+
+def decrypt(cipher_text, private_key):
+    d, n = private_key
+    plain_text = [chr(pow(char, d, n)) for char in cipher_text]
+    return ''.join(plain_text)
+
+def encrypt(plain_text, public_key):
+    e, n = public_key
+    cipher_text = [pow(ord(char), e, n) for char in plain_text]
+    return cipher_text
+
+def gcd(a, b):
+    if b == 0:
+        return a
+    else:
+        return gcd(b, a % b)
+
+def generate_keys(p, q):
+    n = p * q
+    phi = (p - 1) * (q - 1)
+    e = random.randrange(1, phi)
+    while gcd(e, phi) != 1:
+        e = random.randrange(1, phi)
+    d = mod_inverse(e, phi)
+
+    return ((e, n), (d, n))
+
+def mod_inverse(e, phi):
+    d = 0
+    x1 = 0
+    x2 = 1
+    y1 = 1
+    temp_phi = phi
+
+    while e > 0:
+        temp1 = temp_phi // e
+        temp2 = temp_phi - temp1 * e
+        temp_phi = e
+        e = temp2
+
+        x = x2 - temp1 * x1
+        y = d - temp1 * y1
+
+        x2 = x1
+        x1 = x
+        d = y1
+        y1 = y
+
+    if temp_phi == 1:
+        return d + phi
+
+p = 61
+q = 53
+public_key, private_key = generate_keys(p, q)
+
+message = "Hello!"
+cipher_text = encrypt(message, public_key)
+print("Cipher text:", cipher_text)
+
+plain_text = decrypt(cipher_text, private_key)
+print("Plain text:", plain_text)
+
+
+DES
+
+!pip install pycryptodome
+
+!pip install crypto
+
+
+from Crypto.Cipher import DES
+from secrets import token_bytes
+
+def get_key():
+  key = token_bytes(8)
+  print("key is (key)")
+  return key
+
+
+def encrypt(msg,key):
+  cipher = DES.new(key,DES.MODE_EAX)
+  nonce = cipher.nonce
+  cipher_text,tag = cipher.encrypt_and_digest(msg.encode('ascii'))
+  return cipher_text,tag,nonce
+msg = "Hello"
+key = get_key()
+ct,tg,nc = encrypt(msg,key)
+print(f"Plaintext: {msg} \nCipherText:{ct}")
+
+
+def decrypt(ct,key,nonce,tag):
+  cipher = DES.new (key,DES.MODE_EAX,nonce=nonce)
+  plain_text = cipher.decrypt(ct)
+  return plain_text
+
+
+decrypt(ct,key,nc,tg)
+
+
+
+Monoalphabetic cipher.
+
+
+cipher_key = {'A':'D', 'B':'E', 'C':'F', 'D':'G', 'E':'H', 
+              'F':'I', 'G':'J', 'H':'K', 'I':'L', 'J':'M', 
+              'K':'N', 'L':'O', 'M':'P', 'N':'Q', 'O':'R', 
+              'P':'S', 'Q':'T', 'R':'U', 'S':'V', 'T':'W', 
+              'U':'X', 'V':'Y', 'W':'Z', 'X':'A', 'Y':'B', 'Z':'C'}
+
+plain_text = input("Enter the message to be encrypted: ")
+
+plain_text = plain_text.upper()
+
+cipher_text = ""
+for letter in plain_text:
+  if letter in cipher_key:
+    cipher_text += cipher_key[letter]
+
+print("The encrypted text is: ", cipher_text)
+
+decipher_key = {'D':'A', 'E':'B', 'F':'C', 'G':'D', 'H':'E', 
+              'I':'F', 'J':'G', 'K':'H', 'L':'I', 'M':'J', 
+              'N':'K', 'O':'L', 'P':'M', 'Q':'N', 'R':'O', 
+              'S':'P', 'T':'Q', 'U':'R', 'V':'S', 'W':'T', 
+              'X':'U', 'Y':'V', 'Z':'W', 'A':'X', 'B':'Y', 'C':'Z'}
+
+cipher_text = input("Enter the message to be decrypted: ")
+
+plain_text = ""
+for letter in cipher_text:
+  if letter in decipher_key:
+    plain_text += decipher_key[letter]
+
+print("The decrypted text is: ", plain_text)
+
+
+
+Caesar Cipher.
+def encryptMe(text, key):
+    l = len(text)
+    tem = ""
+    for i in text:
+        if(ord(i)==32):
+            tem = tem + " "
+            continue
+        #small letter asci code 97 - 122
+        if(ord(i)>96):
+            l = 0
+            m = 0
+            if(ord(i)+key> 122): 
+                l = 122 - ord(i)
+                l = l + key - 1
+                m = 97
+                i = chr(l + m)
+                tem = tem + i
+                continue
+
+            i = chr(ord(i)+ key + l + m)
+            
+            tem = tem + i
+            #operation for Capital Lettter
+        elif(ord(i)<ord('Z')+1):
+            l = 0
+            m = 0
+            if(ord(i)+key>ord('Z')):
+                l = ord('Z') - ord(i)
+                l = l + key - 1
+                m = ord('A')
+                i = chr(l + m)
+                tem = tem + i
+                continue
+
+            i = chr(ord(i)+ key + l + m)
+            
+            tem = tem + i
+    return tem
+            
+
+def decriptMe(text, key):
+    l = len(text)
+    tem = ""
+    for i in text:
+        if(ord(i)==32):
+            tem = tem + " "
+            continue
+        if(ord(i)>96):
+            l = 0
+            m = 0
+            if(ord(i)-key< ord('a')):
+                l =  ord(i) - ord('a')
+                l = l - key - 1
+                m = ord('z')
+                i = chr(m-l)
+                tem = tem + i
+                continue
+
+            i = chr(ord(i)- key)
+            
+            tem = tem + i
+        elif(ord(i)<ord('Z')+1):
+            l = 0
+            m = 0
+            if(ord(i)-key>ord('Z')):
+                l =  ord(i) - ord('Z')
+                l = l - key - 1
+                m = ord('A')
+                i = chr(m-l)
+                tem = tem + i
+                continue
+
+            i = chr(ord(i)- key)
+            
+            tem = tem + i
+    return tem
+
+if __name__ == '__main__':
+    
+    kk = encryptMe("We Love Bangladesh", 3)
+    print(kk)
+    ll = decriptMe(kk, 3)
+    print(ll)
+

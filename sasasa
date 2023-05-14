@@ -1,0 +1,28 @@
+!pip install --upgrade jax jaxlib
+!pip install --upgrade keras
+
+import glob
+from keras.models import Sequential, load_model
+import numpy as np
+import pandas as pd
+from keras.layers import Dense
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+import matplotlib.pyplot as plt
+import keras as k
+
+
+!pip install -U -q PyDrive
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+from google.colab import auth
+from oauth2client.client import GoogleCredentials
+auth.authenticate_user()
+gauth = GoogleAuth()
+gauth.credentials = GoogleCredentials.get_application_default()
+drive = GoogleDrive(gauth) #1st theke ei line porjonto google ID authentication kora hoise
+fid = drive.ListFile({'q':"title='kidney_disease.zip'"}).GetList()[0]['id'] #ekhane drive er moddhe file ta khoja hoise
+f = drive.CreateFile({'id': fid})
+f.GetContentFile('kidney_disease.zip')
+f.keys()
+!unzip kidney_disease.zip
